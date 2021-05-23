@@ -20,7 +20,6 @@ const Layout = ({ children }) => {
                         <div className="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                             <ul className="navbar-nav flex-grow-1">
                                 <li className="nav-item"><Link to="/ViewAll" className='nav-link text-light'>View All</Link></li>
-
                                 {!isLoggedIn && <>
                                     <li className="nav-item"><Link to="/signup" className='nav-link text-light'>Signup</Link></li>
                                     <li className="nav-item"><Link to="/login" className='nav-link text-light'>Login</Link></li>

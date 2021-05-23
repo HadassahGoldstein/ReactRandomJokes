@@ -8,11 +8,9 @@ const AuthContextComponent = ({children}) => {
 
     useEffect(() => {
         const getUser = async () => {
-            const { data } = await getAxios().get('/api/account/getcurrentuser');            
-            
+            const { data } = await getAxios().get('/api/account/getcurrentuser');                        
             setUser(data);
         }
-
         getUser();
       
     }, []);

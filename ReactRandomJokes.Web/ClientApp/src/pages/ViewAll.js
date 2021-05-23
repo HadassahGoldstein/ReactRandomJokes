@@ -1,13 +1,12 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import JokeRow from '../components/JokeRow';
-import getAxios from '../AuthAxios';
 
 export default function ViewAll() {
     const [jokes, setJokes] = useState([]);
     useEffect(() => {
         const getJokes = async () => {
-            const { data } = await getAxios().get('/api/jokes/viewJokes');
+            const { data } = await axios.get('/api/jokes/viewJokes');
             setJokes(data);
         }
         getJokes();

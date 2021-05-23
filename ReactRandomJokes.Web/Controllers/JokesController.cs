@@ -39,17 +39,16 @@ namespace ReactRandomJokes.Web.Controllers
         public List<Joke> ViewJokes()
         {
             var repo = new JokesRepository(_connectionString);
-            return repo.ViewJokes();                      
+            return repo.ViewJokes();
         }
         [HttpPost]
         [Route("LikeJoke")]
-      [Authorize]
+        [Authorize]
         public void LikeJoke(UserLikedJokes ulj)
-        {            
+        {
             var repo = new JokesRepository(_connectionString);
             var repo2 = new UserRepository(_connectionString);
-            string userId = User.FindFirst("user")?.Value;
-            ulj.UserId = repo2.GetByEmail(userId).Id;
+            ulj.UserId = repo2.GetByEmail(User.FindFirst("user")?.Value).Id;            
             ulj.Date = DateTime.Now;
             repo.LikeJoke(ulj);
         }

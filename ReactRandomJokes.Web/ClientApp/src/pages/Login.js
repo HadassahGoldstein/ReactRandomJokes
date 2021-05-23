@@ -1,36 +1,34 @@
-import React,{useState} from 'react';
-import {Link, useHistory} from 'react-router-dom';
-import getAxios from '../AuthAxios';
-import {useAuthContext} from '../AuthContext';
+import React, { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import axios from 'axios';
+import { useAuthContext } from '../AuthContext';
 
-export default function Login(){
-const [form,setForm]=useState({});
-const [isValidLogin,setIsValidLogin]=useState(true);
-const history=useHistory();
-const { setUser } = useAuthContext();
+export default function Login() {
+    const [form, setForm] = useState({});
+    const [isValidLogin, setIsValidLogin] = useState(true);
+    const history = useHistory();
+    const { setUser } = useAuthContext();
 
-const onTextChange=e=>{
-    const copy={...form};
-    copy[e.target.name]=e.target.value;
-    setForm(copy);
-}
-const onFormSubmit=async e=>{
-    try{
-        e.preventDefault();
-        setIsValidLogin(true);
-        const { data } = await getAxios().post('/api/account/login', form);
-        localStorage.setItem('auth-token', data.token);
-        setUser(data);
-        const { data: user } = await getAxios().get('/api/account/getcurrentuser');
-        setUser(user);   
-        history.push('/')
+    const onTextChange = e => {
+        const copy = { ...form };
+        copy[e.target.name] = e.target.value;
+        setForm(copy);
     }
-    catch(e){
-setIsValidLogin(false);
+    const onFormSubmit = async e => {
+        try {
+            e.preventDefault();
+            const { data } = await axios.post('/api/account/login', form);
+            localStorage.setItem('auth-token', data.token);
+            setUser(data);
+            const { data: user } = await axios.get('/api/account/getcurrentuser');
+            setUser(user);
+            history.push('/')
+        }
+        catch (e) {
+            setIsValidLogin(false);
+        }
+
     }
-   
-}
-    
     return (
         <div className="row">
             <div className="col-md-6 offset-md-3 card card-body bg-light">

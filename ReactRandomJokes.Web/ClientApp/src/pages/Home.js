@@ -9,10 +9,20 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {       
-        getRandomJoke();
-        
+        getRandomJoke();        
     }, [])
-   
+       
+    const getRandomJoke = async () => {
+        const { data } = await getAxios().get('/api/jokes/getRandomJoke');
+        setJoke(data);
+        setIsLoading(false);
+        
+    }
+    const getJokeById = async () => {
+        const{data}=await getAxios().get(`/api/jokes/getjokebyid?id=${joke.id}`);
+        setJoke(data);        
+    }
+
     function useInterval(callback, delay) {
         const savedCallback = useRef();
         useEffect(() => {
@@ -30,22 +40,10 @@ export default function Home() {
     }
     useInterval(() => getJokeById(), 1000)
 
-    const getRandomJoke = async () => {
-        const { data } = await getAxios().get('/api/jokes/getRandomJoke');
-        setJoke(data);
-        setIsLoading(false);
-        
-    }
-    const getJokeById = async () => {
-        const{data}=await getAxios().get(`/api/jokes/getjokebyid?id=${joke.id}`);
-        setJoke(data);        
-    }
-
     const onLikeClick =async(liked)=>{
         const userLiked = { liked: liked, jokeId: joke.id};       
         await getAxios().post('/api/jokes/likeJoke', userLiked);
-        getJokeById();
-       
+        getJokeById();       
     }  
     return (
         <div className="row">
@@ -58,9 +56,9 @@ export default function Home() {
                         <div>
                         {!!user && <div>
                             <button className="btn btn-primary" onClick={() => { onLikeClick(true) }}
-                                disabled={joke.userLikedJokes.some(ulj => (ulj.userId == user.id && ulj.liked) || (user.id===ulj.userId && new Date() >= new Date(new Date(ulj.date).getTime() + 5 * 60000)) )}>Like</button>
+                                disabled={joke.userLikedJokes.some(ulj => ulj.userId === user.id && (ulj.liked || new Date() >= new Date(new Date(ulj.date).getTime() + 5 * 60000)) )}>Like</button>
                             <button className="btn btn-danger" onClick={() => { onLikeClick(false) }}
-                                disabled={joke.userLikedJokes.some(ulj => (ulj.userId == user.id && !ulj.liked) ||( user.id===ulj.userId && new Date() >= new Date(new Date(ulj.date).getTime() + 5 * 60000)))}>Dislike</button>
+                                disabled={joke.userLikedJokes.some(ulj => ulj.userId === user.id && (!ulj.liked || new Date() >= new Date(new Date(ulj.date).getTime() + 5 * 60000)))}>Dislike</button>
                             </div>}
                             {!user &&
                                 <div>
@@ -69,8 +67,7 @@ export default function Home() {
                             <br />
                         <h4>Likes: {joke.userLikedJokes.filter(ulj => ulj.liked).length}</h4>
                         <h4>Dislikes:{joke.userLikedJokes.filter(ulj => !ulj.liked).length}</h4>
-                        <h4><button onClick={getRandomJoke} className="btn btn-link">Refresh</button>
-                            </h4>
+                        <h4><button onClick={getRandomJoke} className="btn btn-link">Refresh</button> </h4>                        
                         </div>
                     </div>}
             </div>

@@ -21,8 +21,7 @@ namespace ReactRandomJokes.Data
             var json = client.GetStringAsync(
                    "https://official-joke-api.appspot.com/jokes/programming/random")
                 .Result;
-            var result = JsonConvert.DeserializeObject<List<Joke>>(json);
-            var joke = result.First();
+            var joke = JsonConvert.DeserializeObject<List<Joke>>(json).First();
             using var context = new JokesDbContext(_connectionString);
             joke.Id = 0;
             if (!context.Jokes.Any(j => j.Punchline == joke.Punchline))
@@ -30,9 +29,8 @@ namespace ReactRandomJokes.Data
                 context.Jokes.Add(joke);
                 context.SaveChanges();
             }
-            return context.Jokes.Include(j => j.UserLikedJokes).FirstOrDefault(j=>j.Punchline==joke.Punchline);
-            
-        }
+            return context.Jokes.Include(j => j.UserLikedJokes).FirstOrDefault(j=>j.Punchline==joke.Punchline);            
+        }           
         public List<Joke> ViewJokes()
         {
             using var context = new JokesDbContext(_connectionString);
@@ -40,13 +38,13 @@ namespace ReactRandomJokes.Data
             return jokes;
         }
         public void LikeJoke(UserLikedJokes liked)
-        {
-          
+        {          
             using var context = new JokesDbContext(_connectionString);
             if (context.UserLikedJokes.Any(ulj => ulj.UserId == liked.UserId && ulj.JokeId == liked.JokeId))
             {
                 context.Database.ExecuteSqlInterpolated(@$"UPDATE UserLikedJokes 
-                                                            SET Liked={liked.Liked}, Date=GETDATE() WHERE UserId={liked.UserId} AND JokeId={liked.JokeId}");
+                                                          SET Liked={liked.Liked}, Date=GETDATE() 
+                                                          WHERE UserId={liked.UserId} AND JokeId={liked.JokeId}");
                 return;
             }
             context.UserLikedJokes.Add(liked);
