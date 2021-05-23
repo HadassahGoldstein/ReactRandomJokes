@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
+import getAxios from '../AuthAxios'
 import { useAuthContext } from '../AuthContext';
 
 export default function Login() {
@@ -17,10 +17,10 @@ export default function Login() {
     const onFormSubmit = async e => {
         try {
             e.preventDefault();
-            const { data } = await axios.post('/api/account/login', form);
+            const { data } = await getAxios().post('/api/account/login', form);
             localStorage.setItem('auth-token', data.token);
             setUser(data);
-            const { data: user } = await axios.get('/api/account/getcurrentuser');
+            const { data: user } = await getAxios().get('/api/account/getcurrentuser');
             setUser(user);
             history.push('/')
         }
